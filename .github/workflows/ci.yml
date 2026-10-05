@@ -1,0 +1,23 @@
+name: ci
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install toolchain
+        run: sudo apt-get update && sudo apt-get install -y cmake clang
+      - name: Build and test
+        run: |
+          if [ -f CMakeLists.txt ]; then
+            cmake -B build -DCMAKE_BUILD_TYPE=Debug
+            cmake --build build
+            ctest --test-dir build --output-on-failure
+          else
+            echo "No CMakeLists.txt yet — skeleton CI. Build steps activate with unit 1."
+          fi
